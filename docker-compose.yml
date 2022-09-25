@@ -1,0 +1,9 @@
+version: '3.8'
+
+services:
+  grib2:
+    image: node:18-alpine
+    user: node
+    working_dir: /opt/app
+    volumes:
+      - .:/opt/app
