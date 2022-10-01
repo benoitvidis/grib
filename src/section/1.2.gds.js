@@ -1,9 +1,17 @@
 const CONST = require('../const')
 const GRIBSection = require('./section')
 
+/**
+ * @typedef {import('node:events').EventEmitter} EventEmitter
+ */
+
 class GRIBSectionv1GDS extends GRIBSection {
-  constructor() {
-    super(1, CONST.section.v1.gds)
+  /**
+   * @param {GRIBv1Dataset} dataset
+   * @param {number} offset
+   */
+  constructor(dataset, offset) {
+    super(CONST.section.v1.gds, dataset, offset)
 
     this.dataType
     this.gridDescription
@@ -15,12 +23,9 @@ class GRIBSectionv1GDS extends GRIBSection {
     this.pv
   }
 
-  /**
-   * @param {Buffer} buffer
-   * @param {number} offset
-   */
-  parse(buffer, offset = 0) {
-    console.log(buffer)
+  parse() {
+    const buffer = this.buffer
+
     this.length = 256 * 256 * buffer.readUInt8(0) + buffer.readUInt16BE(1)
     this.nv = buffer.readUInt8(3)
     this.dataType = buffer.readUInt8(5)
@@ -35,16 +40,16 @@ class GRIBSectionv1GDS extends GRIBSection {
     switch (this.dataType) {
       case 0:
         this.gridDescription = {
-          ni: buffer.readUInt16BE(6),
-          nj: buffer.readUInt16BE(8),
-          la1: this.bin2LatLon(buffer, 10),
-          lo1: this.bin2LatLon(buffer, 13),
-          resolution: buffer.readUInt8(16),
-          la2: this.bin2LatLon(buffer, 17),
-          lo2: this.bin2LatLon(buffer, 20),
           di: buffer.readUInt16BE(23),
           djN: buffer.readUInt16BE(25),
           flags: buffer.readUInt8(27),
+          la1: this.bin2LatLon(buffer, 10),
+          la2: this.bin2LatLon(buffer, 17),
+          lo1: this.bin2LatLon(buffer, 13),
+          lo2: this.bin2LatLon(buffer, 20),
+          ni: buffer.readUInt16BE(6),
+          nj: buffer.readUInt16BE(8),
+          resolution: buffer.readUInt8(16),
         }
         break
       default:

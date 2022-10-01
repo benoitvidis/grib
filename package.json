@@ -7,11 +7,15 @@
   "author": "Benoît Vidis",
   "license": "MIT",
   "scripts": {
-    "lint": "npx prettier --write ."
+    "lint": "eslint --fix src && prettier --write ."
   },
   "devDependencies": {
     "@types/node": "^18.7.21",
     "eslint": "^8.24.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-sort-keys-fix": "^1.1.2",
     "prettier": "^2.7.1"
-  }
+  },
+  "dependencies": {}
 }

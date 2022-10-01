@@ -1,29 +1,37 @@
+/**
+ * @typedef {import('node:events').EventEmitter} EventEmitter
+ */
+
 class GRIBSection {
   /**
-   * @param {number} gribVersion
    * @param {string} type
+   * @param {GRIBDataset} dataset
+   * @param {number} offset
    */
-  constructor(gribVersion, type) {
-    this.gribVersion = gribVersion
+  constructor(type, dataset, offset) {
+    this.dataset = dataset
+
+    this.isDone = false
 
     /** @type {number} */
     this.length
+    this.offset = offset
 
     this.position = 0
     this.type = type
   }
 
   /**
-   * @param {Buffer} buffer
-   * @param {number} offset
+   * @returns {Buffer}
    */
-  parse(buffer, offset = 0) {
-    throw new Error('not implemented')
+  get buffer() {
+    return this.dataset.grib.buffer.subarray(this.offset - this.dataset.grib.buffer.offset)
   }
 
   /**
    * @param {Buffer} buffer
    * @param {0} offset
+   * @returns {number}
    */
   bin2LatLon(buffer, offset) {
     let mul = 1
@@ -33,10 +41,6 @@ class GRIBSection {
       firstByte = firstByte ^ 128
       mul = -1
     }
-    console.log({
-      firstByte,
-      mul,
-    })
 
     return (mul / 1000) * (256 * 256 * firstByte + buffer.readUInt16BE(offset + 1))
   }
@@ -44,10 +48,14 @@ class GRIBSection {
   /**
    * @param {Buffer} buffer
    * @param {number} offset
-   * @returns
+   * @returns {number}
    */
   bin3bytes2Int(buffer, offset) {
     return 256 * 256 * buffer.readUInt8(offset) + buffer.readUInt16BE(offset + 1)
+  }
+
+  parse() {
+    throw new Error('not implemented')
   }
 }
 

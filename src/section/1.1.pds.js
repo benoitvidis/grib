@@ -1,9 +1,16 @@
 const CONST = require('../const')
 const GRIBSection = require('./section')
 
+/**
+ * @typedef {import('node:events').EventEmitter} EventEmitter
+ */
+
 class GRIBSectionv1PDS extends GRIBSection {
-  constructor() {
-    super(1, CONST.section.v1.pds)
+  /**
+   * @param {GRIBv1Dataset} dataset
+   */
+  constructor(dataset) {
+    super(CONST.section.v1.pds, dataset, 8)
 
     this.average
     this.center
@@ -28,12 +35,9 @@ class GRIBSectionv1PDS extends GRIBSection {
     this.timeRange
   }
 
-  /**
-   * @param {Buffer} buffer
-   * @param {number} offset
-   */
-  parse(buffer, offset = 0) {
-    console.log(buffer)
+  parse() {
+    const buffer = this.buffer
+
     this.length = 256 * 256 * buffer.readUInt8(0) + buffer.readUInt16BE(1)
 
     this.center = buffer.readUInt8(4)
@@ -77,7 +81,7 @@ class GRIBSectionv1PDS extends GRIBSection {
       this.scaleFactor = scale
     }
 
-    return this
+    this.isDone = true
   }
 }
 

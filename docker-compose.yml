@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  grib2:
+  grib:
     image: node:18-alpine
     user: node
     working_dir: /opt/app
